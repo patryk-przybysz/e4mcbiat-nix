@@ -71,7 +71,6 @@
 
               makeWrapper ${lib.getExe jre} $out/bin/e4mcbiat \
                 --add-flags "-Dawt.useSystemAAFontSettings=on" \
-                --add-flags "-Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel" \
                 --add-flags "-jar $out/share/e4mcbiat/e4mcbiat.jar" \
                 --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath swingLibs}
 
@@ -83,6 +82,16 @@
               homepage = "https://github.com/DuncanRuns/e4mcbiat";
               license = licenses.mit;
               mainProgram = "e4mcbiat";
+              platforms = [
+                "x86_64-linux"
+                "aarch64-linux"
+              ];
+              maintainers = [
+                {
+                  name = "Patryk Przybysz";
+                  github = "patryk-przybysz";
+                }
+              ];
               sourceProvenance = with sourceTypes; [
                 fromSource
                 binaryBytecode
@@ -96,10 +105,7 @@
       packages = eachSystem (
         system:
         let
-          pkgs = import nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
-          };
+          pkgs = nixpkgs.legacyPackages.${system};
           e4mcbiat = packageFor pkgs;
         in
         {
@@ -117,6 +123,7 @@
           default = {
             type = "app";
             program = "${e4mcbiat}/bin/e4mcbiat";
+            meta.description = "Open a Minecraft LAN world to friends via e4mc";
           };
         }
       );
